@@ -1,5 +1,5 @@
 import shutil
-from iso_newengland import collect
+from isonewengland import collect
 import os
 
 target_dir = os.path.join(os.getcwd(), "target")

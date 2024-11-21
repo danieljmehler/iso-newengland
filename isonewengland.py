@@ -61,6 +61,7 @@ def collect(start_date: str, end_date: str, username: str, password: str, output
                     
 
 def main():
+    print("MAIN FN CALLED")
     parser = argparse.ArgumentParser(prog='iso-newengland')
     parser.add_argument("--start-date", help="Date on which to start data collection (e.g., \"20210301\" for 03/01/2021)")
     parser.add_argument("--end-date", help="Date on which to end data collection (e.g., \"20210301\" for 03/01/2021)")
@@ -69,6 +70,7 @@ def main():
     parser.add_argument("--output-dir", help="Directory to output files")
     parser.add_argument("--csv", action="store_true", help="Save files as .CSV instead of .JSON")
     args = parser.parse_args()
+    collect(start_date=args.start_date, end_date=args.end_date, username=args.username, password=args.password, output_dir=args.output_dir, conver_to_csv=args.csv)
 
 if __name__ == "__main__":
     main()

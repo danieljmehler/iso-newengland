@@ -2,11 +2,11 @@
 
 1. Create the folders to use as your workspace. I recommend creating the following folders: `/Users/<username>/workspace/iso-newengland`.
 
-1. Create a new file in your workspace named "iso-newengland.py" (full path of file will be `/Users/<username>/workspace/iso-newengland/iso-newengland.py`).
+1. Create a new file in your workspace named "isonewengland.py" (full path of file will be `/Users/<username>/workspace/iso-newengland/isonewengland.py`).
 
-1. In a browser, go to https://raw.githubusercontent.com/danieljmehler/iso-newengland/refs/heads/main/iso_newengland.py. You should see a Python script in plain-text at that URL.
+1. In a browser, go to https://raw.githubusercontent.com/danieljmehler/iso-newengland/refs/heads/main/isonewengland.py. You should see a Python script in plain-text at that URL.
 
-1. Copy the contents of the file at that URL into your `iso-newengland.py` file using any file editor, such as TextEdit.
+1. Copy the contents of the file at that URL into your `isonewengland.py` file using any file editor, such as TextEdit.
 
 1. Open Terminal.
 
@@ -25,7 +25,7 @@
 1. In Terminal, use a command structured like the following to download hourly LMP data for the range of dates given:
 
     ```bash
-    python3 iso-newengland.py --start-date 'YYYYMMDD' --end-date 'YYYYMMDD' --username 'JohnDoe@gmail.com' --password 'MyP@$$w0rd01' --output-dir './data'
+    python3 isonewengland.py --start-date 'YYYYMMDD' --end-date 'YYYYMMDD' --username 'JohnDoe@gmail.com' --password 'MyP@$$w0rd01' --output-dir './data'
     ```
 
 ## Example 1 - Download LMP data for May 2024 in JSON format
@@ -33,7 +33,7 @@
 1. To download hourly LMP data for May 2024, use the following command:
 
     ```bash
-    python3 python3 iso-newengland.py --start-date '20240501' --end-date '20240531' --username 'JohnDoe@gmail.com' --password 'MyP@$$w0rd01' --output-dir './data'
+    python3 isonewengland.py --start-date '20240501' --end-date '20240531' --username 'JohnDoe@gmail.com' --password 'MyP@$$w0rd01' --output-dir './data'
     ```
 
     This will create a new folder in the current directory named `data` (if it does not already exist), and files will be created named:
@@ -59,7 +59,7 @@
 1. To download hourly LMP data for September 2021 in CSV format, use the following command:
 
     ```bash
-    python3 python3 iso-newengland.py --start-date '20210901' --end-date '20210930' --username 'JohnDoe@gmail.com' --password 'MyP@$$w0rd01' --output-dir './data' --csv
+    python3 isonewengland.py --start-date '20210901' --end-date '20210930' --username 'JohnDoe@gmail.com' --password 'MyP@$$w0rd01' --output-dir './data' --csv
     ```
 
     This will create a new folder in the current directory named `data` (if it does not already exist), and files will be created named:
