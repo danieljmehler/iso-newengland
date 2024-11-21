@@ -8,7 +8,7 @@ import urllib.request
 
 date_format = "%Y%m%d"
 
-def collect(start_date: str, end_date: str, username: str, password: str, output_dir: str = os.getcwd(), conver_to_csv: bool = False):
+def collect(start_date: str, end_date: str, username: str, password: str, output_dir: str = os.getcwd(), convert_to_csv: bool = False):
     # Create output folder
     os.makedirs(output_dir, exist_ok=True)
 
@@ -32,7 +32,7 @@ def collect(start_date: str, end_date: str, username: str, password: str, output
             resp = None
             with urllib.request.urlopen(req) as response:
                 resp = response.read().decode('utf-8')
-            if not conver_to_csv:
+            if not convert_to_csv:
                 with open(os.path.join(output_dir, f"iso-newengland-hourlylmp-{current.strftime(date_format)}-{hr}.json"), 'w') as f:
                     f.write(resp)
             else:
@@ -70,7 +70,7 @@ def main():
     parser.add_argument("--output-dir", help="Directory to output files")
     parser.add_argument("--csv", action="store_true", help="Save files as .CSV instead of .JSON")
     args = parser.parse_args()
-    collect(start_date=args.start_date, end_date=args.end_date, username=args.username, password=args.password, output_dir=args.output_dir, conver_to_csv=args.csv)
+    collect(start_date=args.start_date, end_date=args.end_date, username=args.username, password=args.password, output_dir=args.output_dir, convert_to_csv=args.csv)
 
 if __name__ == "__main__":
     main()

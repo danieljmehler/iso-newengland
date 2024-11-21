@@ -21,7 +21,7 @@ class TestIsoNewEngland:
                 assert os.path.exists(os.path.join(target_dir, f"iso-newengland-hourlylmp-202401{day}-{hr}.json"))
     
     def test_csv(self):
-        collect(start_date="20240101", end_date="20240103", username="danieljmehler@gmail.com", password="password32", output_dir=target_dir, conver_to_csv=True)
+        collect(start_date="20240101", end_date="20240103", username="danieljmehler@gmail.com", password="password32", output_dir=target_dir, convert_to_csv=True)
         assert os.path.exists(target_dir)
         for d in range(1, 4):
             day = str(d).zfill(2)
