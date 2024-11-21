@@ -26,7 +26,7 @@ options:
 
 ## Examples
 
-### Example 1
+### Example 1 - JSON data
 
 To download a JSON file for EACH HOUR for EACH DAY IN SEPTEMBER 2023 and output the files to /Users/johndoe/data (if the directories do not exist, they will be created):
 
@@ -59,7 +59,7 @@ JSON data will look like the following:
 ```
 
 
-### Example 2
+### Example 2 - CSV data
 
 To download a CSV file for EACH HOUR of APRIL 9, 2024 and output the files to /Users/johndoe/data (if the directories do not exist, they will be created):
 
@@ -75,7 +75,7 @@ BeginDate,LocationID,LocationType,LocationName,LmpTotal,EnergyComponent,Congesti
 2024-01-01T13:00:00.000-05:00,322,NETWORK NODE,UN.FRNKLNSQ13.811CC,33.84,34.09,0,-0.25
 ```
 
-### Example 3
+### Example 3 - Aggregating data
 
 To download a CSV file for EACH HOUR of EVERY DAY of 2022 and 2023, aggregate the data by YEAR, and output the files to /Users/johndoe/data (if the directories do not exist, they will be created):
 
