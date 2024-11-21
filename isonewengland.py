@@ -8,11 +8,19 @@ import urllib.request
 
 date_format = "%Y%m%d"
 
+def write_file(obj: dict, output_dir: str, filename_suffix: str, convert_to_csv: bool = False):
+    if not convert_to_csv:
+        write_json(obj, output_dir=output_dir, filename_suffix=filename_suffix)
+    else:
+        write_csv(obj=obj, output_dir=output_dir, filename_suffix=filename_suffix)
+
 def write_json(obj: dict, output_dir: str, filename_suffix: str):
+    print(f"Writing data to {output_dir}/iso-newengland-hourlylmp-{filename_suffix}.json")
     with open(os.path.join(output_dir, f"iso-newengland-hourlylmp-{filename_suffix}.json"), 'w') as f:
-            f.write(obj)
+        f.write(json.dumps(obj))
 
 def write_csv(obj: dict, output_dir: str, filename_suffix: str):
+    print(f"Writing data to {output_dir}/iso-newengland-hourlylmp-{filename_suffix}.csv")
     # Convert JSON to CSV
     headers = ["BeginDate", "LocationID", "LocationType", "LocationName", "LmpTotal", "EnergyComponent", "CongestionComponent", "LossComponent"]
     with open(os.path.join(output_dir, f"iso-newengland-hourlylmp-{filename_suffix}.csv"), 'w', newline='\n') as f:
@@ -31,8 +39,9 @@ def write_csv(obj: dict, output_dir: str, filename_suffix: str):
             } for item in obj["HourlyLmps"]["HourlyLmp"]]
         writer.writerows(csv_obj)
 
-def collect(start_date: str, end_date: str, username: str, password: str, output_dir: str = os.getcwd(), aggregate_by: str = None, convert_to_csv: bool = False):
+def collect(start_date: str, end_date: str, username: str, password: str, output_dir: str = os.getcwd(), aggregate_by: str = "hour", convert_to_csv: bool = False):
     # Create output folder
+    print(f"Creating output directory at {output_dir}")
     os.makedirs(output_dir, exist_ok=True)
 
     # Convert "YYYYMMDD" strings to datetime objects
@@ -42,32 +51,65 @@ def collect(start_date: str, end_date: str, username: str, password: str, output
     # base64 encode username:password
     auth_bytes = base64.urlsafe_b64encode(bytes(f"{username}:{password}", 'utf-8'))
 
-    aggragation = {"HourlyLmps": {"HourlyLmp": []}}
-    current = start
+    aggregation = {"HourlyLmps": {"HourlyLmp": []}}
+    current_day = start
     # For each day
-    while current <= end:
+    while current_day <= end:
         # For each hour 00-23
         for i in range(0, 24):
             hr = str(i).zfill(2)  # Pad with zeros to 2 characters
-            url = f"https://webservices.iso-ne.com/api/v1.1/hourlylmp/da/final/day/{current.strftime(date_format)}/hour/{hr}"
+            print(f"Downloading data from {current_day.strftime(date_format)}={hr}")
+            url = f"https://webservices.iso-ne.com/api/v1.1/hourlylmp/da/final/day/{current_day.strftime(date_format)}/hour/{hr}"
             req = urllib.request.Request(url)
             req.add_header("Authorization", f"Basic {auth_bytes.decode('utf-8')}")
             req.add_header("Accept", "application/json")
             resp = None
+            json_obj = None
             with urllib.request.urlopen(req) as response:
                 resp = response.read().decode('utf-8')
-            if not convert_to_csv:
-                write_json(obj=json.loads(resp), output_dir=output_dir, filename_suffix=f"{current.strftime(date_format)}-{hr}")
+                json_obj = json.loads(resp)
+            # Write 1 file per hour
+            if aggregate_by == "hour":
+                write_file(json_obj, output_dir=output_dir, filename_suffix=f"{current_day.strftime(date_format)}-{hr}", convert_to_csv=convert_to_csv)
+            # Otherwise, add data to aggregation
             else:
-                write_csv(obj=json.loads(resp), output_dir=output_dir, filename_suffix=f"{current.strftime(date_format)}-{hr}")
-        # Increase "current" by 1 day
-        current += timedelta(days=1)
-                    
-                    
+                aggregation["HourlyLmps"]["HourlyLmp"] += json_obj["HourlyLmps"]["HourlyLmp"]
+
+        # Write file if aggregating by day
+        if aggregate_by == "day":
+            write_file(json_obj, output_dir=output_dir, filename_suffix=current_day.strftime(date_format), convert_to_csv=convert_to_csv)
+            # Reset aggregation dict
+            aggregation = {"HourlyLmps": {"HourlyLmp": []}}
+        
+        # Increase "current_day" by 1 day
+        current_day += timedelta(days=1)
+
+        # If current_day is now the first day of a month
+        if current_day.day == 1:
+            # If current_day is 01/01/YYYY and we want to aggregate by year, save to file
+            if current_day.month == 1 and aggregate_by == "year":
+                write_file(aggregation, output_dir=output_dir, filename_suffix=str(current_day.year - 1), convert_to_csv=convert_to_csv)
+                # Reset aggregation dict
+                aggregation = {"HourlyLmps": {"HourlyLmp": []}}
+            # Else, if we are aggregating by month
+            elif aggregate_by == "month":
+                write_file(aggregation, output_dir=output_dir, filename_suffix=f"{current_day.year}{str(current_day.month-1).zfill(2)}", convert_to_csv=convert_to_csv)
+                # Reset aggregation dict
+                aggregation = {"HourlyLmps": {"HourlyLmp": []}}
+    
+    # If there is data left in aggregation, need to write last month, last year, or all
+    if len(aggregation["HourlyLmps"]["HourlyLmp"]) > 0:
+        if aggregate_by == "all":
+            filename_suffix = f"{start_date}-{end_date}"
+        elif aggregate_by == "year":
+            filename_suffix = current_day.year
+        elif aggregate_by == "month":
+            filename_suffix = f"{current_day.year}{str(current_day.month).zfill(2)}"
+        write_file(aggregation, output_dir=output_dir, filename_suffix=filename_suffix, convert_to_csv=convert_to_csv)
+
 
 def main():
-    print("MAIN FN CALLED")
-    parser = argparse.ArgumentParser(prog='iso-newengland')
+    parser = argparse.ArgumentParser(prog='isonewengland')
     parser.add_argument("--start-date", help="Date on which to start data collection (e.g., \"20210301\" for 03/01/2021)")
     parser.add_argument("--end-date", help="Date on which to end data collection (e.g., \"20210301\" for 03/01/2021)")
     parser.add_argument("--username", help="ISO New England username")
