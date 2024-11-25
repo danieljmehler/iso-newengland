@@ -47,16 +47,16 @@ def write_csv(obj: dict, output_dir: str, filename_suffix: str):
         writer.writerows(csv_obj)
 
 
-async def make_request(session: aiohttp.ClientSession, date: datetime, hr: str, username: str = None, password: str = None, output_dir: str = None, convert_to_csv: bool = False):
+async def make_request(session: aiohttp.ClientSession, date: datetime, hr: str, username: str = None, password: str = None, output_dir: str = None, convert_to_csv: bool = False) -> dict:
     url = f"https://webservices.iso-ne.com/api/v1.1/hourlylmp/da/final/day/{date.strftime(date_format)}/hour/{hr}"
-    print(f"Getting data from {url}")
+    # print(f"Getting data from {url}")
     async with session.get(url, auth=aiohttp.BasicAuth(username, password)) as response:
         # await asyncio.sleep(1)  # Simulating a delay
         data = await response.json()
         if output_dir:
             write_file(data, output_dir=output_dir,
                        filename_suffix=f"{date.strftime(date_format)}-{hr}", convert_to_csv=convert_to_csv)
-        return data
+        return {"date": date, "hr": hr, "data": data}
 
 
 async def make_requests(date: datetime, username: str = None, password: str = None, output_dir: str = None, convert_to_csv: bool = None):
@@ -70,7 +70,10 @@ async def make_requests(date: datetime, username: str = None, password: str = No
         # No need to aggregate data if aggregate_by==hour
         if not output_dir:
             for result in results:
-                aggregation["HourlyLmps"]["HourlyLmp"] += result["HourlyLmps"]["HourlyLmp"]
+                if 'HourlyLmps' not in result["data"] or 'HourlyLmp' not in result["data"]['HourlyLmps']:
+                    print(f"Error aggregating data for date {result['date']} at hour {result['hr']}. HTTP GET response: {result['data']}. Inspect this error and determine if it is expected (e.g., if the error occurred at 2am on the Spring daylight savings change).")
+                else:
+                    aggregation["HourlyLmps"]["HourlyLmp"] += result["data"]["HourlyLmps"]["HourlyLmp"]
     return aggregation
 
 
