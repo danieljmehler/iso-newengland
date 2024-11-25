@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.3] - 2024-11-25
+
+### Changed
+
+- Changed synchronous HTTP GET calls to ISO New England to async requests per day.
+
 ## [0.0.2] - 2024-11-21
 
 ### Added
@@ -25,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial functionality
 
-[unreleased]: https://github.com/danieljmehler/iso-newengland/compare/0.0.2...HEAD
+[unreleased]: https://github.com/danieljmehler/iso-newengland/compare/0.0.3...HEAD
+[0.0.3]: https://github.com/danieljmehler/iso-newengland/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/danieljmehler/iso-newengland/compare/0.0.1...0.0.2
 [0.0.1]: https://github.com/danieljmehler/iso-newengland/releases/tag/0.0.1
