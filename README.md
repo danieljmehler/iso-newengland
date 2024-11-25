@@ -58,7 +58,6 @@ JSON data will look like the following:
 }
 ```
 
-
 ### Example 2 - CSV data
 
 To download a CSV file for EACH HOUR of APRIL 9, 2024 and output the files to /Users/johndoe/data (if the directories do not exist, they will be created):
