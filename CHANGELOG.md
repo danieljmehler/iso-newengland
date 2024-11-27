@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4] - 2024-11-27
+
+### Added
+
+- Added `id` field with UUID to each HourlyLmp on data retrieval.
+
 ## [0.0.3] - 2024-11-25
 
 ### Changed
@@ -31,7 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial functionality
 
-[unreleased]: https://github.com/danieljmehler/iso-newengland/compare/0.0.3...HEAD
+[unreleased]: https://github.com/danieljmehler/iso-newengland/compare/0.0.4...HEAD
+[0.0.4]: https://github.com/danieljmehler/iso-newengland/compare/0.0.2...0.0.4
 [0.0.3]: https://github.com/danieljmehler/iso-newengland/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/danieljmehler/iso-newengland/compare/0.0.1...0.0.2
 [0.0.1]: https://github.com/danieljmehler/iso-newengland/releases/tag/0.0.1
