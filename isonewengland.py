@@ -1,3 +1,4 @@
+import uuid
 import aiohttp
 import argparse
 import asyncio
@@ -28,13 +29,14 @@ def write_csv(obj: dict, output_dir: str, filename_suffix: str):
     print(
         f"Writing data to {output_dir}/iso-newengland-hourlylmp-{filename_suffix}.csv")
     # Convert JSON to CSV
-    headers = ["BeginDate", "LocationID", "LocationType", "LocationName",
+    headers = ["id", "BeginDate", "LocationID", "LocationType", "LocationName",
                "LmpTotal", "EnergyComponent", "CongestionComponent", "LossComponent"]
     with open(os.path.join(output_dir, f"iso-newengland-hourlylmp-{filename_suffix}.csv"), 'w', newline='\n') as f:
         writer = csv.DictWriter(f, fieldnames=headers)
         writer.writeheader()
         # Write CSV
         csv_obj = [{
+            "id": item["id"],
             "BeginDate": item["BeginDate"],
             "LocationID": item["Location"]['@LocId'],
             "LocationType": item["Location"]['@LocType'],
@@ -53,6 +55,9 @@ async def make_request(session: aiohttp.ClientSession, date: datetime, hr: str, 
     async with session.get(url, auth=aiohttp.BasicAuth(username, password)) as response:
         # await asyncio.sleep(1)  # Simulating a delay
         data = await response.json()
+        if 'HourlyLmps' in data and 'HourlyLmp' in data['HourlyLmps']:
+            for hourlylmp in data['HourlyLmps']['HourlyLmp']:
+                hourlylmp['id'] = str(uuid.uuid4())
         if output_dir:
             write_file(data, output_dir=output_dir,
                        filename_suffix=f"{date.strftime(date_format)}-{hr}", convert_to_csv=convert_to_csv)
